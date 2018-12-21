@@ -46,7 +46,20 @@ class DjangoObjectField(Field):
 # *********************************************** #
 # *************** FIELDS FOR LIST *************** #
 # *********************************************** #
-class DjangoFilterListField(Field):
+
+class DjangoDecoratorField(object):
+    def __init__(self, decorators=None, *args, **kwargs):
+        self.resolver_decorators = decorators
+
+    def get_resolver(self, parent_resolver):
+        if self.resolver_decorators:
+            for decorator in self.resolver_decorators:
+                self.list_resolver = decorator(self.list_resolver)
+        return super(DjangoDecoratorField, self).get_resolver(parent_resolver)
+
+
+
+class DjangoFilterListField(Field, DjangoDecoratorField):
 
     def __init__(self, _type, fields=None, extra_filter_meta=None,
                  filterset_class=None, *args, **kwargs):
@@ -136,7 +149,7 @@ class DjangoFilterListField(Field):
         )
 
 
-class DjangoFilterPaginateListField(Field):
+class DjangoFilterPaginateListField(Field, DjangoDecoratorField):
 
     def __init__(self, _type, pagination=None, fields=None, extra_filter_meta=None,
                  filterset_class=None, *args, **kwargs):
@@ -210,7 +223,7 @@ class DjangoFilterPaginateListField(Field):
         )
 
 
-class DjangoListObjectField(Field):
+class DjangoListObjectField(Field, DjangoDecoratorField):
 
     def __init__(self, _type, fields=None, extra_filter_meta=None, filterset_class=None, *args, **kwargs):
 
