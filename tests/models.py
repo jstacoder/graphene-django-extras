@@ -20,3 +20,9 @@ class BasicModel(DummyModel):
         verbose_name=_("Text comes here"),
         help_text=_("Text description."),
     )
+
+class Dude(models.Model):
+    class Meta:
+        app_label = 'tests'
+
+    name = models.CharField(max_length=5)
